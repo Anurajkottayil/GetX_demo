@@ -1,11 +1,16 @@
+// login_page.dart
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_example/home_screen.dart';
 import 'package:get_example/register_screen.dart';
 import 'package:get_example/theme.dart';
+import 'package:get_example/view/text_field.dart';
+import 'package:get_example/logic/textfield_logic.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+   final LoginLogic logic = Get.put(LoginLogic());
+
+   LoginPage({Key? key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,20 +33,34 @@ class LoginPage extends StatelessWidget {
                   children: [
                   SizedBox(height: MediaQuery.sizeOf(context).height*0.2,),
                   Text("E mail",style: themedata.text,),
-                  TextField(
-                        decoration: themedata.text_field,
-                      ),
+                 Obx(() => CustomTextField(
+                   controller: logic.emailController.value,
+                   label: 'Email',
+                   validator: logic.validateEmail,
+                    onChanged: () {
+                              logic.isLoginButtonPressed.value = false;
+                            },
+                 )),
               
                 SizedBox(height: MediaQuery.sizeOf(context).height*0.02,),
                 
                   Text("Password",style: themedata.text,),
-                  TextField(
-                        decoration: themedata.text_field,
-                      ),
+                 Obx(() => CustomTextField(
+                   controller: logic.passwordController.value,
+                   label: 'Password',
+                   validator: logic.validatePassword,
+                    onChanged: () {
+                              logic.isLoginButtonPressed.value = false;
+                            },
+                 )),
+              
                
                 SizedBox(height: MediaQuery.sizeOf(context).height*0.05,),
                
-                ElevatedButton(onPressed: (){Get.to(()=>Homepage1());}, child:Text("Login"),style: themedata.button,),
+                ElevatedButton(onPressed: () async {
+                  logic.isLoginButtonPressed.value = true; // Set the flag when login button is pressed
+                  await logic.login();
+                }, child:Text("Login"),style: themedata.button,),
                
                 SizedBox(height: MediaQuery.sizeOf(context).height*0.05,),
                 
